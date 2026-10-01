@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CATEGORIES } from "@/lib/categories";
 
-export default function ExpenseForm({ onAdd }) {
+export default function ExpenseForm({ onAdd, isSaving }) {
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
   const [category, setCategory] = useState("");
@@ -54,8 +54,9 @@ export default function ExpenseForm({ onAdd }) {
       <button
         type="submit"
         className="rounded bg-gray-900 px-4 py-2 font-medium text-white transition-colors hover:bg-gray-800"
+        disabled={isSaving}
       >
-        追加
+        {isSaving ? "保存中..." : "追加"}
       </button>
     </form>
   );

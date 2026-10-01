@@ -7,6 +7,7 @@ export default function ExpenseItem({
   date,
   id,
   onDelete,
+  isDeleting,
 }) {
   return (
     <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
@@ -21,8 +22,9 @@ export default function ExpenseItem({
         <button
           onClick={() => onDelete(id)}
           className="text-sm font-medium text-gray-400 transition-colors hover:text-red-600"
+          disabled={isDeleting}
         >
-          削除
+          {isDeleting ? "削除中..." : "削除"}
         </button>
       </div>
     </div>
