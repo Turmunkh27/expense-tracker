@@ -2,7 +2,7 @@ import { useState } from "react";
 import ExpenseItem from "@/components/ExpenseItem";
 import { formatYen, CATEGORIES } from "@/lib/categories";
 
-export default function ExpenseList({ expenses, onDelete }) {
+export default function ExpenseList({ expenses, onDelete, isDeleting }) {
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const filteredExpenses =
@@ -60,6 +60,7 @@ export default function ExpenseList({ expenses, onDelete }) {
               key={expense.id}
               id={expense.id}
               onDelete={onDelete}
+              isDeleting={isDeleting}
             />
           ))}
         </div>

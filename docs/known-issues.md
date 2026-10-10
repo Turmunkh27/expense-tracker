@@ -16,3 +16,7 @@
   対応方針: `PATCH`ハンドラ内で、既存のexpenseを取得 → `changes`とマージ → マージ後の完全なオブジェクトを`validateExpense`に渡す、という流れにする(`changes`単体を渡すと、部分更新なのに未入力フィールドが誤ってエラー判定されるため)。
 
 ## 低
+
+- **[week3] 削除ボタンのdisabled範囲が粗い**
+  複数の支出がある時、どれか1つを削除している間、`isDeleting`が共通stateのため他の削除ボタンも全てdisabledになる。UX上は「クリックした項目だけ」disabledにする方が正確。
+  対応方針: 削除中の`id`自体をstateで持ち、`ExpenseItem`側で「自分のidと一致するか」を比較してdisabled判定する。
