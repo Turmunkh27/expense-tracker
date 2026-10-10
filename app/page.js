@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 import ExpenseList from "@/components/ExpenseList";
 import ExpenseForm from "@/components/ExpenseForm";
+import { useToast } from "@/components/Toast";
+import ToastHost from "@/components/ToastHost";
+import { getExpenses, createExpense, deleteExpense } from "@/lib/api";
 
 export default function Home() {
   const [expenses, setExpenses] = useState([]);
@@ -11,19 +14,16 @@ export default function Home() {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const { toast, show } = useToast();
+
   useEffect(() => {
     load();
   }, []);
 
   async function load() {
     try {
-      const res = await fetch("/api/expenses");
-      const data = await res.json();
-      if (res.ok) {
-        setExpenses(data);
-      } else {
-        throw new Error("例外が発生");
-      }
+      const data = await getExpenses();
+      setExpenses(data);
     } catch (e) {
       setError(`${e.message}, エラーが出ました！`);
     } finally {
@@ -31,50 +31,31 @@ export default function Home() {
     }
   }
 
-  // const handleAdd = (newExpense) => {
-  //   setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
-  // };
   async function handleAdd(newExpense) {
     setIsSaving(true);
     try {
-      const res = await fetch("/api/expenses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newExpense),
-      });
+      await createExpense(newExpense);
 
-      if (res.ok) {
-        load(); //追加できたので、全部を撮り直す
-      } else {
-        console.error("追加に失敗しました。");
-      }
+      load();
+      show("追加に成功しました。", "success");
     } catch (e) {
       console.error(e);
+      show(e.message || "追加に失敗しました。", "error");
     } finally {
       setIsSaving(false);
     }
   }
 
-  // const handleDelete = (id) => {
-  //   setExpenses((prevExpenses) =>
-  //     prevExpenses.filter((expense) => expense.id !== id)
-  //   );
-  // };
-
   async function handleDelete(id) {
     setIsDeleting(true);
     try {
-      const res = await fetch(`/api/expenses/${id}`, {
-        method: "DELETE",
-      });
+      await deleteExpense(id);
 
-      if (res.ok) {
-        load();
-      } else {
-        console.error("削除に失敗しました");
-      }
+      load();
+      show("削除に成功しました。", "success");
     } catch (e) {
       console.error(e);
+      show(e.message || "削除に失敗しました。", "error");
     } finally {
       setIsDeleting(false);
     }
@@ -105,6 +86,7 @@ export default function Home() {
       <p className="mt-2 text-gray-600">このアプリは動いています。</p>
       <hr className="my-6 border-gray-200" />
       {content}
+      <ToastHost toast={toast} />
     </main>
   );
 }
